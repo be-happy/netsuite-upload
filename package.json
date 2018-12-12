@@ -44,7 +44,7 @@
           "description": "The ID of the NetSuite account where the RESTlet is deployed."
         },
         "netSuiteUpload.tokenBasedAuthentication.consumer.key": {
-          "type":"string",
+          "type": "string",
           "description": "The consumer key for the integration record being used to track the calling application."
         },
         "netSuiteUpload.tokenBasedAuthentication.consumer.secret": {
