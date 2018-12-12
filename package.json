@@ -39,43 +39,25 @@
           "type": "string",
           "description": "Authentication header"
         },
-        "netSuiteUpload.tokenBasedAuthentication": {
-          "type": "object",
-          "description": "Token Based Authentication",
-          "properties": {
-            "netSuiteUpload.tokenBasedAuthentication.realm": {
-              "type": "string",
-              "description": "The ID of the NetSuite account where the RESTlet is deployed."
-            },
-            "netSuiteUpload.tokenBasedAuthentication.consumer": {
-              "type": "object",
-              "description": "The consumer key/secret for the integration record being used to track the calling application.",
-              "properties": {
-                "netSuiteUpload.tokenBasedAuthentication.consumer.key": {
-                  "type":"string",
-                  "description": "The consumer key for the integration record being used to track the calling application."
-                },
-                "netSuiteUpload.tokenBasedAuthentication.consumer.secret": {
-                  "type": "string",
-                  "description": "The consumer secret for the integration record being used to track the calling application."
-                }
-              }
-            },
-            "netSuiteUpload.tokenBasedAuthentication.token": {
-              "type": "object",
-              "description": "A token that represents a unique combination of a user and an integration record.",
-              "properties": {
-                "netSuiteUpload.tokenBasedAuthentication.token.key": {
-                  "type": "string",
-                  "description": "A token key that represents a unique combination of a user and an integration record. "
-                },
-                "netSuiteUpload.tokenBasedAuthentication.token.secret": {
-                  "type": "string",
-                  "description": "A token secret that represents a unique combination of a user and an integration record. "
-                }
-              }
-            }
-          }
+        "netSuiteUpload.tokenBasedAuthentication.realm": {
+          "type": "string",
+          "description": "The ID of the NetSuite account where the RESTlet is deployed."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.consumer.key": {
+          "type":"string",
+          "description": "The consumer key for the integration record being used to track the calling application."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.consumer.secret": {
+          "type": "string",
+          "description": "The consumer secret for the integration record being used to track the calling application."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.token.key": {
+          "type": "string",
+          "description": "A token key that represents a unique combination of a user and an integration record. "
+        },
+        "netSuiteUpload.tokenBasedAuthentication.token.secret": {
+          "type": "string",
+          "description": "A token secret that represents a unique combination of a user and an integration record. "
         },
         "netSuiteUpload.restlet": {
           "type": "string",
