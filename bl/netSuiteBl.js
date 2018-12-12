@@ -55,8 +55,8 @@ function previewFileFromNetSuite(file) {
         
         var relativeFileName = nsRestClient.getRelativePath(file.fsPath);
         var tempFolder = vscode.workspace.getConfiguration('netSuiteUpload')['tempFolder'];
-        var filePathArray = (relativeFileName.split('.')[0] + '.preview.' + relativeFileName.split('.')[1]).split('\\');
-        var newPreviewFile = tempFolder + '\\' + filePathArray[filePathArray.length-1];
+        var filePathArray = (relativeFileName.split('.')[0] + '.preview.' + relativeFileName.split('.')[1]).split(path.sep);
+        var newPreviewFile = tempFolder + path.sep + filePathArray[filePathArray.length - 1];
 
         fs.writeFile(newPreviewFile, data[0].content.toString());
 
@@ -71,9 +71,9 @@ function downloadDirectoryFromNetSuite(directory) {
         if (hasError(data, 'Folder does not exist in NetSuite')) return;
 
         data.forEach(function(file) {
-            var fullFilePath = vscode.workspace.rootPath + file.fullPath.split('/').join('\\');
+            var fullFilePath = vscode.workspace.rootPath + file.fullPath.split('/').join(path.sep);
 
-            createDirectoryIfNotExist(fullFilePath + (file.type == 'folder' ? '\\_' : ''));
+            createDirectoryIfNotExist(fullFilePath + (file.type == 'folder' ? path.sep  + '_' : ''));
             
             if (file.type == 'file') {
                 fs.writeFile(fullFilePath, file.content.toString());
