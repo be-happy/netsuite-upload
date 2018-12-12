@@ -100,18 +100,19 @@ function deleteFile(file, callback) {
 
 function deletetData(type, objectPath, callback) {
     var relativeName = getRelativePath(objectPath);
-    
+    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
+    var url = baseRestletURL + (baseRestletURL.indexOf('?') > -1 ? '&' : '?');
+    url += 'type=' + type + '&name=' + encodeURIComponent(relativeName);
+
     var client = new RestClient();
     var args = {
-        path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": getAuthorizationHeader('DELETE')
+            "Authorization": getAuthorizationHeader('DELETE', url)
         }
     };
 
-    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
-    client.delete(baseRestletURL + '&type=' + type + '&name=${name}', args, function (data) {
+    client.delete(url, args, function (data) {
         callback(data);
     });
 }
