@@ -5,7 +5,7 @@ let crypto = require('crypto');
 
 
 
-function getAuthorizationHeader(method) {
+function getAuthorizationHeader(method, url) {
     var nsUpload = vscode.workspace.getConfiguration('netSuiteUpload');
     var NLAuth = nsUpload.authentication;
     if (NLAuth) {
@@ -23,7 +23,7 @@ function getAuthorizationHeader(method) {
     });
 
     var request_data = {
-        url: nsUpload.restlet,
+        url: url || nsUpload.restlet,
         method: method
     };
 
@@ -52,16 +52,18 @@ function getData(type, objectPath, callback) {
     var relativeName = getRelativePath(objectPath);
     
     var client = new RestClient();
+    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
+    var url = baseRestletURL + (baseRestletURL.indexOf('?') > -1 ? '&' : '?');
+    url += 'type=' + type + '&name=' + encodeURIComponent(relativeName);
+
     var args = {
-        path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": getAuthorizationHeader('GET')
+            "Authorization": getAuthorizationHeader('GET', url)
         }
     };
 
-    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
-    client.get(baseRestletURL + '&type=' + type + '&name=${name}', args, function (data) {
+    client.get(url, args, function (data) {
         callback(data);
     });
 }
