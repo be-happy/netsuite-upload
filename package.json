@@ -39,6 +39,26 @@
           "type": "string",
           "description": "Authentication header"
         },
+        "netSuiteUpload.tokenBasedAuthentication.realm": {
+          "type": "string",
+          "description": "The ID of the NetSuite account where the RESTlet is deployed."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.consumer.key": {
+          "type": "string",
+          "description": "The consumer key for the integration record being used to track the calling application."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.consumer.secret": {
+          "type": "string",
+          "description": "The consumer secret for the integration record being used to track the calling application."
+        },
+        "netSuiteUpload.tokenBasedAuthentication.token.key": {
+          "type": "string",
+          "description": "A token key that represents a unique combination of a user and an integration record. "
+        },
+        "netSuiteUpload.tokenBasedAuthentication.token.secret": {
+          "type": "string",
+          "description": "A token secret that represents a unique combination of a user and an integration record. "
+        },
         "netSuiteUpload.restlet": {
           "type": "string",
           "description": "Restlet URL"
@@ -144,9 +164,11 @@
     "@types/mocha": "^2.2.32"
   },
   "dependencies": {
+    "crypto": "^1.0.1",
     "esprima": "3.1.3",
     "estraverse": "4.2.0",
     "node-rest-client": "2.0.1",
+    "oauth-1.0a": "^2.2.5",
     "underscore": "1.8.3"
   }
 }

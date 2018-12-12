@@ -1,5 +1,35 @@
 let vscode = require('vscode');
 let RestClient = require('node-rest-client').Client;
+let OAuth = require('oauth-1.0a');
+let crypto = require('crypto');
+
+
+
+function getAuthorizationHeader(method, url) {
+    var nsUpload = vscode.workspace.getConfiguration('netSuiteUpload');
+    var NLAuth = nsUpload.authentication;
+    if (NLAuth) {
+        return NLAuth;
+    }
+
+    var tba = nsUpload.tokenBasedAuthentication;
+
+    var oauth = OAuth({
+        consumer: tba.consumer,
+        signature_method: 'HMAC-SHA256',
+        hash_function(base_string, key) {
+            return crypto.createHmac('sha256', key).update(base_string).digest('base64');
+        }
+    });
+
+    var request_data = {
+        url: url || nsUpload.restlet,
+        method: method
+    };
+
+    var header = oauth.toHeader(oauth.authorize(request_data, tba.token));
+    return header.Authorization + ', realm="' +tba.realm + '"';
+}
 
 function getRelativePath(absFilePath) {
     var rootDirectory = vscode.workspace.getConfiguration('netSuiteUpload')['rootDirectory'];
@@ -22,16 +52,18 @@ function getData(type, objectPath, callback) {
     var relativeName = getRelativePath(objectPath);
     
     var client = new RestClient();
+    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
+    var url = baseRestletURL + (baseRestletURL.indexOf('?') > -1 ? '&' : '?');
+    url += 'type=' + type + '&name=' + encodeURIComponent(relativeName);
+
     var args = {
-        path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('GET', url)
         }
     };
 
-    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
-    client.get(baseRestletURL + '&type=' + type + '&name=${name}', args, function (data) {
+    client.get(url, args, function (data) {
         callback(data);
     });
 }
@@ -47,7 +79,7 @@ function postData(type, objectPath, content, callback) {
     var args = {
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('POST')
         },
         data: {
             type: 'file',
@@ -68,18 +100,19 @@ function deleteFile(file, callback) {
 
 function deletetData(type, objectPath, callback) {
     var relativeName = getRelativePath(objectPath);
-    
+    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
+    var url = baseRestletURL + (baseRestletURL.indexOf('?') > -1 ? '&' : '?');
+    url += 'type=' + type + '&name=' + encodeURIComponent(relativeName);
+
     var client = new RestClient();
     var args = {
-        path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('DELETE', url)
         }
     };
 
-    var baseRestletURL = vscode.workspace.getConfiguration('netSuiteUpload')['restlet'];
-    client.delete(baseRestletURL + '&type=' + type + '&name=${name}', args, function (data) {
+    client.delete(url, args, function (data) {
         callback(data);
     });
 }

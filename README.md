@@ -45,10 +45,23 @@ Right-click the file/folder in the navigation panel to see the options:
 	"netSuiteUpload.restlet": "<RESTlet URL>",
 
 	// Temporary folder (e.g. C:\\temp) - used for storing compared file
-	"netSuiteUpload.tempFolder": "<TEMP FOLDER PATH>"
+	"netSuiteUpload.tempFolder": "<TEMP FOLDER PATH>",
 
 	// Base NetSuite folder path to upload script to (e.g. "SuiteScripts/Developer")
-	"netSuiteUpload.rootDirectory": "<BASE FOLDER PATH>"
+	"netSuiteUpload.rootDirectory": "<BASE FOLDER PATH>",
+
+	// Token Based Authentication
+	// The ID of the NetSuite account where the RESTlet is deployed.
+	"netSuiteUpload.tokenBasedAuthentication.realm": "<ACCOUNT ID>",
+	// The consumer key/secret for the integration record being used to track the calling application.
+	// The consumer key for the integration record being used to track the calling application.
+	"netSuiteUpload.tokenBasedAuthentication.consumer.key": "<KEY>",
+	// The consumer secret for the integration record being used to track the calling application.
+	"netSuiteUpload.tokenBasedAuthentication.consumer.secret": "<KEY>",
+	// A token key that represents a unique combination of a user and an integration record.
+	"netSuiteUpload.tokenBasedAuthentication.token.key": "<KEY>",
+	// A token secret that represents a unique combination of a user and an integration record.
+	"netSuiteUpload.tokenBasedAuthentication.token.secret": "<KEY>"
 }
 ```
 

@@ -2,7 +2,7 @@
  * @NApiVersion 2.x
  * @NScriptType Restlet
  */
-define(['N/file', 'N/search', 'N/record'], function (file, search, record) {
+define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, record, log) {
     
     function getFolderId(folderPath) {
         var foldersArray = folderPath.split('/');
@@ -183,10 +183,47 @@ define(['N/file', 'N/search', 'N/record'], function (file, search, record) {
     }
 
     function getFileType(fileName) {
+        var _ext = fileName && (fileName.indexOf('.') > 0) ? fileName.split('.').pop() : null;
+        var extTypes = {
+            bmp: 'BMPIMAGE',
+            css: 'STYLESHEET',
+            csv: 'CSV',
+            doc: 'WORD',
+            dwg: 'AUTOCAD',
+            eml: 'MESSAGERFC',
+            eot: 'EOT',
+            gif: 'GIFIMAGE',
+            gz: 'GZIP',
+            htm: 'HTMLDOC',
+            html: 'HTMLDOC',
+            ico: 'ICON',
+            jpg: 'JPGIMAGE',
+            js: 'JAVASCRIPT',
+            mov: 'QUICKTIME',
+            mp3: 'MP3',
+            mpg: 'MPEGMOVIE',
+            mpp: 'MSPROJECT',
+            pdf: 'PDF',
+            pjpeg: 'PJPGIMAGE',
+            png: 'PNGIMAGE',
+            ppt: 'POWERPOINT',
+            ps: 'POSTSCRIPT',
+            rtf: 'RTF',
+            sms: 'SMS',
+            svg: 'SVG',
+            swf: 'FLASH',
+            tiff: 'TIFFIMAGE',
+            ttf: 'TTF',
+            txt: 'PLAINTEXT',
+            vsd: 'VISIO',
+            woff: 'WOFF',
+            woff2: 'WOFF2',
+            xls: 'EXCEL',
+            xml: 'XMLDOC',
+            zip: 'ZIP'
+        };
 
-        // TODO: differentiate according to the file extension
-        return file.Type.JAVASCRIPT;
-
+        return extTypes[_ext] ? file.Type[extTypes[_ext]] : file.Type.JAVASCRIPT;
     }
 
     function postFile(relFilePath, content) {
@@ -214,6 +251,13 @@ define(['N/file', 'N/search', 'N/record'], function (file, search, record) {
     }
 
     function getFunc(request) {
+        log.debug({
+            title: 'get',
+            details: JSON.stringify({
+                type: request.type,
+                name: request.name
+            })
+        });
         var type = request.type; // directory, file
         var relPath = request.name.split('\\').join('/');
         // TODO: fix request.name == EMPTY STRING
@@ -227,12 +271,25 @@ define(['N/file', 'N/search', 'N/record'], function (file, search, record) {
     }
 
     function postFunc(request) {
+        log.debug({
+            title: 'post',
+            details: JSON.stringify({
+                size: request.content.length,
+                name: request.name
+            })
+        });
         var relPath = request.name.split('\\').join('/');
         
         postFile(relPath, request.content);
     }
 
     function deleteFunc(request) {
+        log.debug({
+            title: 'delete',
+            details: JSON.stringify({
+                name: request.name
+            })
+        });
         var relPath = request.name.split('\\').join('/');
         
         deleteFile(relPath);
