@@ -1,5 +1,35 @@
 let vscode = require('vscode');
 let RestClient = require('node-rest-client').Client;
+let OAuth = require('oauth-1.0a');
+let crypto = require('crypto');
+
+
+
+function getAuthorizationHeader(method) {
+    var nsUpload = vscode.workspace.getConfiguration('netSuiteUpload');
+    var NLAuth = nsUpload.authentication;
+    if (NLAuth) {
+        return NLAuth;
+    }
+
+    var tba = nsUpload.tokenBasedAuthentication;
+
+    var oauth = OAuth({
+        consumer: tba.consumer,
+        signature_method: 'HMAC-SHA256',
+        hash_function(base_string, key) {
+            return crypto.createHmac('sha256', key).update(base_string).digest('base64');
+        }
+    });
+
+    var request_data = {
+        url: nsUpload.restlet,
+        method: method
+    };
+
+    var header = oauth.toHeader(oauth.authorize(request_data, tba.token));
+    return header.Authorization + ', realm="' +tba.realm + '"';
+}
 
 function getRelativePath(absFilePath) {
     var rootDirectory = vscode.workspace.getConfiguration('netSuiteUpload')['rootDirectory'];
@@ -26,7 +56,7 @@ function getData(type, objectPath, callback) {
         path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('GET')
         }
     };
 
@@ -47,7 +77,7 @@ function postData(type, objectPath, content, callback) {
     var args = {
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('POST')
         },
         data: {
             type: 'file',
@@ -74,7 +104,7 @@ function deletetData(type, objectPath, callback) {
         path: { name: relativeName },
         headers: {                
             "Content-Type": "application/json",
-            "Authorization": vscode.workspace.getConfiguration('netSuiteUpload')['authentication']
+            "Authorization": getAuthorizationHeader('DELETE')
         }
     };
 
