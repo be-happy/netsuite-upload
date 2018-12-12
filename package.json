@@ -41,7 +41,7 @@
         },
         "netSuiteUpload.tokenBasedAuthentication": {
           "type": "object",
-          "description": "Toke Based Authentication",
+          "description": "Token Based Authentication",
           "properties": {
             "netSuiteUpload.tokenBasedAuthentication.realm": {
               "type": "string",
