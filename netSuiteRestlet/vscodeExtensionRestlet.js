@@ -60,7 +60,17 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
             var folderRecord = record.create({ type: record.Type.FOLDER });
             folderRecord.setValue({ fieldId: 'name', value: firstFolder });
             folderRecord.setValue({ fieldId: 'parent', value: parentId });
-            folderId = folderRecord.save();
+            try {
+                folderId = folderRecord.save();
+            } catch (e) {
+                folderSearch.run().each(function (result) {
+                    folderId = result.id;
+                    return false;
+                });
+                if (!folderId) {
+                    throw e;
+                }
+            }
         }
 
         if (!nextFolders || nextFolders.length == 0) return folderId;
@@ -165,6 +175,12 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
             isOnline: existingFile.isOnline
         });
         fileObj.save();
+
+        return {
+            status: "success",
+            op: "updateFile",
+            file: existingFile
+        };
     }
 
     function createFile(filePath, content) {
@@ -180,6 +196,12 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
             folder: folder
         });
         fileObj.save();
+
+        return {
+            status: "success",
+            op: "createFile",
+            file: fileObj
+        };
     }
 
     function getFileType(fileName) {
@@ -233,10 +255,10 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
             var loadedFile = file.load({
                 id: fullFilePath
             });
-            updateFile(loadedFile, content);
+            return updateFile(loadedFile, content);
         } catch(e) {
             if (e.name == 'RCRD_DSNT_EXIST') {
-                createFile(fullFilePath, content);
+                return createFile(fullFilePath, content);
             } else {
                 throw e;
             }
@@ -248,6 +270,12 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
 
         var fileObject = file.load({ id: fullFilePath });
         file.delete({ id: fileObject.id });
+
+        return {
+            status: "success",
+            op: "delete",
+            id: fileObject.id
+        };
     }
 
     function getFunc(request) {
@@ -280,7 +308,7 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
         });
         var relPath = request.name.split('\\').join('/');
         
-        postFile(relPath, request.content);
+        return postFile(relPath, request.content);
     }
 
     function deleteFunc(request) {
@@ -292,7 +320,7 @@ define(['N/file', 'N/search', 'N/record', 'N/log'], function (file, search, reco
         });
         var relPath = request.name.split('\\').join('/');
         
-        deleteFile(relPath);
+        return deleteFile(relPath);
     }
 
     return {
